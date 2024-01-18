@@ -1,0 +1,18 @@
+# Compiled binaries and build directories
+Debug/
+*.o
+*.d
+*.elf
+*.map
+*.hex
+*.bin
+
+# Editor/IDE specific files
+*.launch
+*.ld
+
+# Exclude all log files
+*.log
+
+.metadata/
+.DS_Store
