@@ -1,7 +1,7 @@
 #include "osKernel.h"
 
-#define MAX_NUM_OF_THREADS 2   // Maximum number of threads
-#define STACK_SIZE 100         // Size of each thread's stack
+#define MAX_NUM_OF_THREADS 2
+#define STACK_SIZE 100
 #define BUS_FREQ 16000000      // Bus frequency in Hz
 #define MIL_SEC_PRE_SCALE (int)(BUS_FREQ / 1000)
 
@@ -18,9 +18,12 @@ typedef struct tcb {
     struct tcb* nextPtr;  // Pointer to the next thread control block
 } tcb;
 
-tcb tcbs[MAX_NUM_OF_THREADS];                    // Array of thread control blocks
-tcb *currentPtr;                                 // Pointer to the current thread control block
-int32_t tcb_stack[MAX_NUM_OF_THREADS][STACK_SIZE];  // Stack for each thread
+
+
+tcb tcbs[MAX_NUM_OF_THREADS];
+tcb *currentPtr;
+int32_t tcb_stack[MAX_NUM_OF_THREADS][STACK_SIZE];
+
 
 // Function to initialize the stack of a thread
 void osKernelStackInit(int i) {
@@ -61,7 +64,7 @@ void osKernelInit(void) {
     // Initialization code here (if any)
 }
 
-// Function to launch the kernel scheduler
+
 void osKernelLaunch(uint32_t quanta) {
     SysTick->CTRL = SYSTICK_RST;         // Reset SysTick
     SysTick->VAL = 0;                    // Clear SysTick current value register
@@ -78,6 +81,7 @@ void osKernelLaunch(uint32_t quanta) {
 
 
 __attribute__((naked)) void SysTick_Handler(void) {
+
     // Save the context of the current task
     __asm volatile(
         "CPSID I\n"               // Disable interrupts
@@ -112,8 +116,8 @@ __attribute__((naked)) void SysTick_Handler(void) {
 
 
 void osSchedulerLaunch(void) {
-    currentPtr = &tcbs[0]; // Set to the first task
 
+    currentPtr = &tcbs[0]; // Set to the first task
     __set_PSP((uint32_t)currentPtr->stackPtr); // Set PSP to the task's stack pointer
     __set_CONTROL(__get_CONTROL() | 0x02);     // Switch to use the PSP
     __ISB();                                   // Ensure effects of previous instructions are observed
