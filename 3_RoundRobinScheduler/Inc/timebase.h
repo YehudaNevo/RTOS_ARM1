@@ -5,7 +5,7 @@
 
 uint32_t get_tick(void);
 void timebase_init(void);
-void delay(uint32_t delay);
+void delay(uint32_t delay); // in sec
 
 
 

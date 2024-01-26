@@ -62,9 +62,9 @@ uint32_t get_tick(void)
 }
 
 
-//SysTick interrupt handler. Called every tick.
-
-void SysTick_Handler(void)
-{
-    tick_increment();
-}
+////SysTick interrupt handler. Called every tick.
+//
+//void SysTick_Handler(void)
+//{
+//    tick_increment();
+//}
