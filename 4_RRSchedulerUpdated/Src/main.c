@@ -16,12 +16,11 @@ int main(void) {
     uart_tx_init();
 
 
-    // Create an array of task functions
+    //int taskPriorities[] = {1, 2};
+
     void (*tasks[])(void) = {&task1, &task2};
 
-    // Add tasks to the OS Kernel
-    osKernelAddThreads(tasks, 2);
-
+    osKernelAddThreads(tasks,  2);
     // Launch the OS scheduler
     osKernelLaunch(QUANTA_TIME);
 
@@ -41,6 +40,7 @@ int main(void) {
 void task1(void) {
     while(1) {
         printf("Task 1 is running\n");
+        //osThreadYield(); // if we comment it it wll use all the q time it get ..
        // delay(1);
     }
 }
@@ -48,6 +48,7 @@ void task1(void) {
 void task2(void) {
     while(1) {
         printf("Task 2 is running\n");
+        osThreadYield();
         //delay(1);
     }
 }
