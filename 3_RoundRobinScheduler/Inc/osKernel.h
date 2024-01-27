@@ -7,6 +7,7 @@
 extern volatile uint32_t systick_flag;
 
 void osKernelInit();
+
 uint8_t osKernelAddThreads(void(*tasks[])(void), uint8_t numTasks);
 void osKernelLaunch(uint32_t quanta);
 void osSchedulerLaunch(void);
