@@ -11,11 +11,9 @@
 #define CTRL_CLCKSRC (1U << 2)    // SysTick clock source: processor clock
 #define CTRL_COUNTFLAG (1U << 16) // Timer count-to-0 flag (read-only)
 #define SYSTICK_RST 0             // Reset value for SysTick
+#define INTCTRL (*((volatile uint32_t *)0xE000ED04)) // REG FOR CTLR SYSTIC INT 
+#define PENDSTSET (1U<<26)
 
-
-// Definition for manipulating the SysTick interrupt in the NVIC
-#define INTCTRL (*((volatile uint32_t *)0xE000ED04)) // Register for controlling SysTick interrupt
-#define PENDSTSET (1U << 26)      // Bit to set SysTick interrupt pending
 
 // Thread control block structure
 typedef struct tcb {
@@ -141,13 +139,13 @@ void osSchedulerLaunch(void) {
 
 
 
-/**
- * Triggers a SysTick interrupt to yield the current thread and switch to the next one.
- */
 void osThreadYield(void)
 {
-    SysTick->VAL = 0;           // Reset the SysTick current value
-    INTCTRL |= PENDSTSET;       // Set the SysTick interrupt pending bit to trigger an interrupt
+	// for going to next thread we just need to  apply systick interupt .. 
+	
+	SysTick->VAL = 0;
+	INTCTRL = PENDTSET;
+	
 }
 
 

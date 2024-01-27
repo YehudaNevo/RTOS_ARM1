@@ -41,7 +41,6 @@ int main(void) {
 void task1(void) {
     while(1) {
         printf("Task 1 is running\n");
-        //osThreadYield(); // if we comment it it wll use all the q time it get ..
        // delay(1);
     }
 }
@@ -49,7 +48,6 @@ void task1(void) {
 void task2(void) {
     while(1) {
         printf("Task 2 is running\n");
-        osThreadYield();
         //delay(1);
     }
 }

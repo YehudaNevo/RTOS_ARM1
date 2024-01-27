@@ -11,8 +11,6 @@ uint8_t osKernelAddThreads(void(*tasks[])(void), uint8_t numTasks);
 void osKernelLaunch(uint32_t quanta);
 void osSchedulerLaunch(void);
 void osKernelStackInit(int i);
-void osThreadYield(void);
-
 
 
 
