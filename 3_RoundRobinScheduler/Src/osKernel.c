@@ -17,11 +17,12 @@
 #define INTCTRL (*((volatile uint32_t *)0xE000ED04)) // Register for controlling SysTick interrupt
 #define PENDSTSET (1U << 26)      // Bit to set SysTick interrupt pending
 
-// Thread control block structure
 typedef struct tcb {
     int32_t *stackPtr;    // Pointer to the stack
-    struct tcb* nextPtr;  // Pointer to the next thread control block
+    struct tcb *nextPtr;  // Pointer to the next thread control block
+    //int priority;         // Task priority
 } tcb;
+
 
 
 
@@ -149,6 +150,9 @@ void osThreadYield(void)
     SysTick->VAL = 0;           // Reset the SysTick current value
     INTCTRL |= PENDSTSET;       // Set the SysTick interrupt pending bit to trigger an interrupt
 }
+
+
+
 
 
 

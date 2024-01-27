@@ -16,12 +16,11 @@ int main(void) {
     uart_tx_init();
 
 
-    // Create an array of task functions
+    //int taskPriorities[] = {1, 2};
+
     void (*tasks[])(void) = {&task1, &task2};
 
-    // Add tasks to the OS Kernel
-    osKernelAddThreads(tasks, 2);
-
+    osKernelAddThreads(tasks,  2);
     // Launch the OS scheduler
     osKernelLaunch(QUANTA_TIME);
 
