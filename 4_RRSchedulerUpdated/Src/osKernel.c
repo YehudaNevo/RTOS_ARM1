@@ -17,6 +17,12 @@
 #define PENDSTSET (1U << 26)
 
 
+#define TIMER2ENABLE (1U <<0)
+#define CR1_CEN (1U << 0)
+#define DIER_UIE (1U << 0)
+
+
+
 
 typedef struct tcb {
     int32_t *stackPtr;
@@ -32,13 +38,11 @@ int32_t tcbs_stack[MAX_NUM_OF_THREADS][STACK_SIZE];
 tcb *head = NULL;
 
 
-
 void osKernelStackInit(int i) {
     tcbs[i].stackPtr = &tcbs_stack[i][STACK_SIZE - 16];
     tcbs_stack[i][STACK_SIZE - 1] = (1U << 24);
 
 }
-
 
 void insertTaskSorted(tcb* taskToInsert) {
     __disable_irq();
@@ -81,9 +85,6 @@ void insertTaskSorted(tcb* taskToInsert) {
     }
     __enable_irq();
 }
-
-
-
 
 uint8_t osKernelAddThreads(void(*tasks[])(void), int priorities[], uint8_t numTasks) {
     if (numTasks > MAX_NUM_OF_THREADS) {
@@ -160,3 +161,33 @@ void osThreadYield(void) {
     SysTick->VAL = 0;
     INTCTRL |= PENDSTSET;
 }
+
+
+
+void time2_1hz_interrupt_init(void)
+{
+    // Enable clock access to Timer 2
+    RCC->APB1ENR |= TIMER2ENABLE;
+
+    // Set Timer 2 prescaler to divide the clock by 1600
+    TIM2->PSC = 1600 - 1;  // 16MHz / 1600 = 10kHz
+
+    // Set auto-reload value for 1Hz interrupt frequency
+    TIM2->ARR = 10000 - 1; // 10kHz / 10000 = 1Hz
+
+    // Clear Timer 2 counter
+    TIM2->CNT = 0;
+
+    // Enable Timer 2
+    TIM2->CR1 = CR1_CEN;
+
+    // Enable Timer 2 update interrupt
+    TIM2->DIER |= DIER_UIE;
+
+    // Enable Timer 2 interrupt in NVIC
+    NVIC_EnableIRQ(TIM2_IRQn);
+}
+
+
+
+

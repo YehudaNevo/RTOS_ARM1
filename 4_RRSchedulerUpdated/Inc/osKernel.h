@@ -4,6 +4,9 @@
 #include <stddef.h>
 #include "stm32f4xx.h"
 
+#define SR_UIF (1U << 0)
+
+
 
 extern volatile uint32_t systick_flag;
 
@@ -13,6 +16,7 @@ void osKernelLaunch(uint32_t quanta);
 void osSchedulerLaunch(void);
 void osKernelStackInit(int i);
 void osThreadYield(void);
+void time2_1hz_interrupt_init(void);
 
 
 

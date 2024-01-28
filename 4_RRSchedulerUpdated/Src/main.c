@@ -12,18 +12,33 @@ void task8(void) { while (1) { printf("Task 8 is running\n"); osThreadYield(); }
 void task9(void) { while (1) { printf("Task 9 is running\n"); osThreadYield(); } }
 void task10(void) { while (1) { printf("Task 10 is running\n"); osThreadYield(); } }
 
-int main(void) {
-    uart_tx_init();
 
+
+void TIM2_IRQHandler(void)
+{
+    // Clear Timer 2 interrupt flag
+    TIM2->SR &= ~SR_UIF;
+
+    // Interrupt service routine
+    printf("----------------------timer 2------------------------------- \n");
+}
+
+
+int main(void) {
+
+
+    uart_tx_init();
     osKernelInit();
+    time2_1hz_interrupt_init();
+
 
     void(*tasks[])(void) = {task1, task2, task3, task4, task5, task6, task7, task8, task9, task10};
 
     int priorities[] = {10, 9, 8, 7, 20, 5, 4, 3, 100, 11};
 
-    osKernelAddThreads(tasks, priorities, 10);
+    //osKernelAddThreads(tasks, priorities, 10);
 
-    osKernelLaunch(100);
+    //osKernelLaunch(100);
 
     while(1) {
     }
