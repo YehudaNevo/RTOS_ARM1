@@ -28,48 +28,60 @@ typedef struct tcb {
 
 tcb tcbs[MAX_NUM_OF_THREADS];
 tcb *currentPtr;
-int32_t tcb_stack[MAX_NUM_OF_THREADS][STACK_SIZE];
+int32_t tcbs_stack[MAX_NUM_OF_THREADS][STACK_SIZE];
 tcb *head = NULL;
 
 
 
 void osKernelStackInit(int i) {
-    tcbs[i].stackPtr = &tcb_stack[i][STACK_SIZE - 16];
-    tcb_stack[i][STACK_SIZE - 1] = (1U << 24);
+    tcbs[i].stackPtr = &tcbs_stack[i][STACK_SIZE - 16];
+    tcbs_stack[i][STACK_SIZE - 1] = (1U << 24);
 
 }
-
 
 
 void insertTaskSorted(tcb* taskToInsert) {
     __disable_irq();
+
     if (head == NULL) {
+        // First task in the list
         head = taskToInsert;
-        head->nextPtr = head; // Circular list
+        taskToInsert->nextPtr = taskToInsert; // Circular list with one element
     } else {
         tcb *current = head;
         tcb *prev = NULL;
-        do {
+
+        while (1) {
             if (taskToInsert->priority > current->priority) {
-                if (current == head) {
-                    head = taskToInsert;
-                }
                 taskToInsert->nextPtr = current;
-                if (prev != NULL) {
-                    prev->nextPtr = taskToInsert;
+
+                if (prev) {
+                    prev->nextPtr = taskToInsert;  // Regular insertion
+                } else {
+                    // Inserting a new head. First, find the last task
+                    tcb *lastTask = head;
+                    while (lastTask->nextPtr != head) {
+                        lastTask = lastTask->nextPtr;
+                    }
+                    lastTask->nextPtr = taskToInsert; // Update last task to point to new head
+                    head = taskToInsert;  // New task becomes the head
                 }
                 break;
             }
+
             prev = current;
             current = current->nextPtr;
-        } while (current != head);
-        if (current == head) {
-            prev->nextPtr = taskToInsert;
-            taskToInsert->nextPtr = head;
+            if (current == head) {
+                // Inserting at the end of the list
+                prev->nextPtr = taskToInsert;
+                taskToInsert->nextPtr = head;
+                break;
+            }
         }
     }
     __enable_irq();
 }
+
 
 
 
@@ -83,7 +95,7 @@ uint8_t osKernelAddThreads(void(*tasks[])(void), int priorities[], uint8_t numTa
     for (int i = 0; i < numTasks; i++) {
         tcbs[i].priority = priorities[i];
         osKernelStackInit(i);
-        tcb_stack[i][STACK_SIZE - 2] = (int32_t)tasks[i];
+        tcbs_stack[i][STACK_SIZE - 2] = (int32_t)tasks[i];
         insertTaskSorted(&tcbs[i]);
     }
 

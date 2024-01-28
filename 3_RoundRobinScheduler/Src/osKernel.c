@@ -28,19 +28,19 @@ typedef struct tcb {
 
 tcb tcbs[MAX_NUM_OF_THREADS];
 tcb *currentPtr;
-int32_t tcb_stack[MAX_NUM_OF_THREADS][STACK_SIZE];
+int32_t tcbs_stack[MAX_NUM_OF_THREADS][STACK_SIZE];
 
 
 // Function to initialize the stack of a thread
 void osKernelStackInit(int i) {
-    tcbs[i].stackPtr = &tcb_stack[i][STACK_SIZE - 16]; // Top of the stack (after registers)
+    tcbs[i].stackPtr = &tcbs_stack[i][STACK_SIZE - 16]; // Top of the stack (after registers)
 
     // Set Thumb mode
-    tcb_stack[i][STACK_SIZE - 1] = (1U << 24);
+    tcbs_stack[i][STACK_SIZE - 1] = (1U << 24);
 
     // Initialize R0-R12, LR for debugging
     for (int j = STACK_SIZE - 3; j >= STACK_SIZE - 16; j--) {
-        tcb_stack[i][j] = 0xAAAAAAAA;
+        tcbs_stack[i][j] = 0xAAAAAAAA;
     }
 }
 
@@ -55,7 +55,7 @@ uint8_t osKernelAddThreads(void(*tasks[])(void), uint8_t numTasks) {
     for (int i = 0; i < numTasks; i++) {
         tcbs[i].nextPtr = &tcbs[(i + 1) % numTasks];
         osKernelStackInit(i);
-        tcb_stack[i][STACK_SIZE - 2] = (int32_t)tasks[i]; // Set PC to task function address
+        tcbs_stack[i][STACK_SIZE - 2] = (int32_t)tasks[i]; // Set PC to task function address
     }
 
     currentPtr = &tcbs[0]; // Start with the first task
